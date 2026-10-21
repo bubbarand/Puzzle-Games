@@ -98,7 +98,7 @@ export function mount(root, ctx) {
     union(`fill="${BROWN}" stroke="${BROWN}" stroke-width="30" stroke-linejoin="round"`) + union(`style="fill:var(--pe-wood);stroke:var(--pe-wood)" stroke-width="24" stroke-linejoin="round"`) +
     union(`style="fill:var(--pe-cav)"`) + cellsOn.filter(([r, c]) => (r + c) % 2).map(([r, c]) => `<rect x="${bx + c * S}" y="${by + r * S}" width="${S}" height="${S}" style="fill:var(--pe-cav2)" fill-opacity=".7"/>`).join('') +
     `<g fill="none" stroke="${BROWN}" stroke-opacity=".28" stroke-width="2" stroke-linecap="round">${cellsOn.map(([r, c]) => (on(r - 1, c) ? '' : `<path d="M${bx + c * S} ${by + r * S}h${S}"/>`) + (on(r, c - 1) ? '' : `<path d="M${bx + c * S} ${by + r * S}v${S}"/>`) + (on(r + 1, c) ? '' : `<path d="M${bx + c * S} ${by + (r + 1) * S}h${S}"/>`) + (on(r, c + 1) ? '' : `<path d="M${bx + (c + 1) * S} ${by + r * S}v${S}"/>`)).join('')}</g>`;
-  const hit = E('rect', { x: bx - 14, y: by - 14, width: cols * S + 28, height: rows * S + 28, fill: 'transparent' }, svg);
+  const hit = E('rect', { 'data-tut': 'board', x: bx - 14, y: by - 14, width: cols * S + 28, height: rows * S + 28, fill: 'transparent' }, svg);
   const hl = E('g', { class: 'pe-hl' }, svg);
 
   // cooling rack: a mint shelf with a dent per candy

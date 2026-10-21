@@ -1,0 +1,26 @@
+// Plays the sokoban tutorial with real mouse input. Usage: node tools/tut/sokoban.mjs [dark] [reduced] [outdir]
+import { launch, sleep } from './lib.mjs';
+import { solve, makeLevel } from '../../product/logic/sokoban.js';
+const [, , a1, a2, out = '/tmp'] = process.argv;
+const t = await launch({ dark: a1 === 'dark', reduced: a2 === 'reduced' });
+const fail = (m) => { console.log('FAIL', m, t.logs); process.exitCode = 1; };
+await t.open('sokoban');
+await t.waitTitle(/Fill the spots/);
+await t.shot(`${out}/sk-1.png`);
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Walk around/);
+const dir = ['up', 'right', 'down', 'left'];
+const pad = async (d) => { await t.tapSel(`.sk-pad button[aria-label=${dir[d]}]`); await sleep(180); };
+await pad(0); await t.waitTitle(/Push, never pull/);
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Take it back/);
+await t.tapSel('[data-a=undo]'); await t.waitTitle(/Your turn/);
+await sleep(800); await t.shot(`${out}/sk-5.png`);
+for (const m of solve(makeLevel(1))) await pad(m.d);
+await t.waitTitle(/complete/, 6000);
+await t.shot(`${out}/sk-done.png`);
+if (await t.ev(`localStorage.getItem('puzzle-app-v1')`)) fail('progress changed');
+await t.tapSel('.tut-btn.go'); await sleep(500);
+if (await t.coach()) fail('coach still open');
+if (await t.ev(`localStorage.getItem('puzzle-app-tutorial-v1')`) !== '{"sokoban":true}') fail('seen flag');
+if (t.logs.length) fail('console errors');
+console.log(process.exitCode ? 'RESULT FAIL' : 'RESULT PASS sokoban');
+await t.close();

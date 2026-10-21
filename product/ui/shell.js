@@ -7,6 +7,8 @@ const thumbs = { ...thumbs0, ...thumbsA, ...thumbsB };
 import { games } from './games.js';
 import { stars as rate } from '../logic/rating.js';
 import { initState, reconcile, onSolved, rowState } from './progress.js';
+import { createTutorial, defaultSteps, isSeen, markSeen, css as tutCss } from './tutorial.js';
+import { tutorials } from './tutorials/index.js';
 
 // Earned order. Built games (in games.js) are available; the rest are locked until built.
 const ORDER = [
@@ -33,6 +35,8 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(
 const TEST_OPEN_ALL = true; // Isaac asked for every game open while testing; set false to turn progression on (or use #real).
 const allMode = () => location.hash === '#all' || (TEST_OPEN_ALL && location.hash !== '#real');
 const syncP = () => { if (allMode()) return loadP(); const s = reconcile(loadP(), today()); saveP(s); return s; };
+
+const TUTORIAL_ALWAYS = true; // Isaac asked for the tutorial on every play while testing; false = first play only (or the ? button).
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -94,6 +98,7 @@ const shellCss = `
 @media (prefers-reduced-motion: reduce) { .win, .win .card { animation: none } }
 `;
 const ICON = {
+  help: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/></svg>',
   back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
   undo: '<svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12" transform="translate(0 -5)"/></svg>',
   reset: '<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v5h-5"/></svg>',
@@ -106,7 +111,7 @@ const LOCK = '<svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18
 
 const app = document.getElementById('app');
 const styleEl = (id, text) => { let s = document.getElementById(id); if (!s) { s = document.createElement('style'); s.id = id; document.head.append(s); } s.textContent = text; };
-styleEl('shell-css', homeCss + shellCss + 'body{margin:0}');
+styleEl('shell-css', homeCss + shellCss + tutCss + 'body{margin:0}');
 const h = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
 let current = null; // { destroy }
 
@@ -126,7 +131,7 @@ function home() {
   for (const { g: [id, title, cls], st } of list) {
     const d = data[id] || {};
     const starsHtml = st === 'done' ? `<span class="stars">${[1, 2, 3].map((n) => STAR(n <= (d.stars || 0)).replace('<svg', '<svg')).join('')}<span>level ${d.level || 1}</span></span><span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Solved</span>` : '';
-    const row = h(`<div class="row" data-class="${cls}" data-state="${st}" ${st === 'locked' ? '' : 'tabindex="0" role="button"'}>${st === 'locked' ? '' : thumbs[id] || ''}<span class="title">${title}</span>${starsHtml}${st === 'frozen' ? FROST : ''}${st === 'locked' ? LOCK : ''}</div>`);
+    const row = h(`<div class="row" data-id="${id}" data-class="${cls}" data-state="${st}" ${st === 'locked' ? '' : 'tabindex="0" role="button"'}>${st === 'locked' ? '' : thumbs[id] || ''}<span class="title">${title}</span>${starsHtml}${st === 'frozen' ? FROST : ''}${st === 'locked' ? LOCK : ''}</div>`);
     if (st !== 'locked') { const go = () => openGame(id); row.addEventListener('click', go); row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); }
     main.append(row);
   }
@@ -161,7 +166,7 @@ function openGame(id) {
   scrollTo(0, 0);
   styleEl('game-css', ui.css);
   const gv = h(`<div class="gv" data-class="${cls}">
-    <header><button class="ibtn" data-a="back" aria-label="Back">${ICON.back}</button><h2>${title}</h2><span class="lvl"></span></header>
+    <header><button class="ibtn" data-a="back" aria-label="Back">${ICON.back}</button><h2>${title}</h2><span class="lvl"></span><button class="ibtn" data-a="tut" aria-label="Tutorial">${ICON.help}</button></header>
     <div class="hud"><span>moves <b data-k="moves">0</b></span><span>best <b data-k="best">-</b></span><span class="dots"></span></div>
     <div class="stage"></div>
     <footer><button class="ibtn" data-a="undo" aria-label="Undo">${ICON.undo}</button><button class="ibtn" data-a="reset" aria-label="Reset">${ICON.reset}</button></footer>
@@ -170,16 +175,17 @@ function openGame(id) {
   app.replaceChildren(gv);
   const $ = (s) => gv.querySelector(s);
   const sound = makeSound(cls);
-  let inst = null, level = data[id]?.level || 1, lastHud = {};
+  let inst = null, level = data[id]?.level || 1, lastHud = {}, tut = null, practice = false;
 
   function start() {
     inst?.destroy(); $('.win').hidden = true;
     const stage = $('.stage'); stage.replaceChildren();
-    $('.lvl').textContent = 'level ' + level;
+    const lv = practice ? 1 : level; // practice always plays level 1 and saves nothing
+    $('.lvl').textContent = practice ? 'practice' : 'level ' + level;
     inst = ui.mount(stage, {
-      level, reduceMotion, sound,
+      level: lv, reduceMotion, sound,
       hud: (x) => {
-        lastHud = x;
+        lastHud = x; tut?.feed(x);
         $('[data-k=moves]').textContent = x.moves; $('[data-k=best]').textContent = x.best ?? '-';
         const dots = $('.dots');
         if (Number.isFinite(x.maxTries)) { const left = x.maxTries - (x.tries ?? 0); dots.innerHTML = Array.from({ length: x.maxTries }, (_, k) => `<i class="${k < left ? '' : 'off'}"></i>`).join(''); }
@@ -188,7 +194,8 @@ function openGame(id) {
         gv.querySelector('[data-a=reset]').disabled = Number.isFinite(x.maxTries);
       },
       solved: ({ score }) => {
-        const n = rate(score, lastHud.best ?? logic.bestScore(logic.makeLevel(level)), true);
+        const n = rate(score, lastHud.best ?? logic.bestScore(logic.makeLevel(lv)), true);
+        if (practice) { tut?.solved({ score, stars: n }); return; }
         const prev = data[id] || {};
         data[id] = { level, done: true, stars: Math.max(prev.level === level ? prev.stars || 0 : 0, n) };
         save(data);
@@ -199,15 +206,20 @@ function openGame(id) {
       },
     });
   }
+  function startTut() {
+    tut?.destroy(); tut = null; practice = true; start();
+    tut = createTutorial({ gv, cls, steps: tutorials[id] || defaultSteps, getRoot: () => $('.stage'), onClose: () => { markSeen(id); tut = null; practice = false; start(); } });
+  }
   gv.addEventListener('click', (e) => {
     const a = e.target.closest('[data-a]')?.dataset.a; if (!a) return;
-    if (a === 'back' || a === 'home') { inst?.destroy(); home(); }
+    if (a === 'tut') startTut();
+    if (a === 'back' || a === 'home') { tut?.destroy(); inst?.destroy(); home(); }
     if (a === 'undo') inst.undo();
     if (a === 'reset') { $('.win').hidden = true; inst.reset(); }
     if (a === 'next') { level += 1; data[id] = { ...(data[id] || {}), level, done: false }; save(data); start(); }
   });
-  current = { destroy: () => inst?.destroy() };
-  start();
+  current = { destroy: () => { tut?.destroy(); inst?.destroy(); } };
+  if (TUTORIAL_ALWAYS || !isSeen(id)) startTut(); else start();
 }
 
 home();

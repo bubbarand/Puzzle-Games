@@ -131,7 +131,7 @@ export function mount(root, ctx) {
       <rect class="r-bar" x="${gx}" y="${by}" width="0" height="6" rx="3" fill="#7B8CDE"/>
       <path d="M${tx} ${by - 7}l5 5l-5 5l-5 -5Z" fill="#7B8CDE" transform="translate(0 ${6})"/><line x1="${tx}" x2="${tx}" y1="${by - 2}" y2="${by + 8}" stroke="var(--bg)" stroke-width="1"/>
       <defs><pattern id="rhy" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="5" fill="#E5446D"/></pattern></defs>
-      <line x1="${gx}" x2="${W - gx}" y1="${yb}" y2="${yb}" stroke="var(--slate)" stroke-opacity=".4"/>
+      <rect data-tut="years" x="${gx}" y="${ytop - 6}" width="${gw}" height="${yb - ytop + 24}" fill="none" pointer-events="none"/><line x1="${gx}" x2="${W - gx}" y1="${yb}" y2="${yb}" stroke="var(--slate)" stroke-opacity=".4"/>
       ${Array.from({ length: 5 }, (_, y) => `<rect class="r-yb" x="${gx + y * (bw + gap)}" y="${yb}" width="${bw}" height="0" rx="4" fill="#2EC4B6"/><text class="r-yn" x="${gx + y * (bw + gap) + bw / 2}" y="${yb + 14}">0</text>`).join('')}
       <line x1="${gx}" x2="${W - gx}" y1="${fy}" y2="${fy}" stroke="#E5446D" stroke-width="1.5" stroke-dasharray="5 4"/>
       <path d="M${gx - 2} ${fy - 4}l-6 4l6 4Z" fill="#E5446D"/>`;

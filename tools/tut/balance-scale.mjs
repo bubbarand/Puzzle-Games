@@ -1,0 +1,30 @@
+// Plays the balance-scale tutorial with real mouse input. Usage: node tools/tut/balance-scale.mjs [dark] [reduced] [outdir]
+import { launch, sleep } from './lib.mjs';
+import { bfs } from '../../product/logic/solve.js';
+import * as logic from '../../product/logic/balance-scale.js';
+const [, , a1, a2, out = '/tmp'] = process.argv;
+const t = await launch({ dark: a1 === 'dark', reduced: a2 === 'reduced' });
+const fail = (m) => { console.log('FAIL', m, t.logs); process.exitCode = 1; };
+await t.open('balance-scale');
+await t.waitTitle(/Balance the pans/);
+await t.shot(`${out}/bs-1.png`);
+const press = async (m) => { await t.tapSel(m.d > 0 ? `[data-add="${m.shape}"]` : `[data-rm="${m.shape}"]`); await sleep(250); };
+let s = logic.initialState(logic.makeLevel(1));
+const play = async (m) => { await press(m); s = logic.applyMove(s, m); };
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Load a shape/);
+await play({ shape: 0, d: 1 }); await t.waitTitle(/Compare shapes/);
+await play({ shape: 1, d: 1 }); await t.waitTitle(/Stock is limited/);
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Take it back/);
+await t.tapSel('[data-a=undo]'); await t.waitTitle(/Your turn/);
+s = logic.applyMove(logic.initialState(logic.makeLevel(1)), { shape: 0, d: 1 }); // the undo took back the second shape
+await sleep(800); await t.shot(`${out}/bs-6.png`);
+for (const m of bfs({ ...logic, initialState: (x) => x }, s).path) await press(m);
+await t.waitTitle(/complete/, 6000);
+await t.shot(`${out}/bs-done.png`);
+if (await t.ev(`localStorage.getItem('puzzle-app-v1')`)) fail('progress changed');
+await t.tapSel('.tut-btn.go'); await sleep(500);
+if (await t.coach()) fail('coach still open');
+if (await t.ev(`localStorage.getItem('puzzle-app-tutorial-v1')`) !== '{"balance-scale":true}') fail('seen flag');
+if (t.logs.length) fail('console errors');
+console.log(process.exitCode ? 'RESULT FAIL' : 'RESULT PASS balance-scale');
+await t.close();

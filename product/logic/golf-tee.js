@@ -1,4 +1,4 @@
-// RULE CHOICE: jumps are along the board's own direction list (square boards: 4 directions; triangle boards: 6); a jump is one move; solved = exactly one peg left.
+// RULE CHOICE: every board is a triangle (4 pegs on the bottom row at level 1); jumps use the 6 triangle directions; a jump is one move; solved = exactly one peg left.
 import { clone } from './solve.js';
 
 export const meta = { id: 'golf-tee', title: 'Golf Tee', cls: 'space' };
@@ -6,14 +6,9 @@ export const meta = { id: 'golf-tee', title: 'Golf Tee', cls: 'space' };
 // board rows: 0 no hole, 1 peg, 2 empty hole. dirs: [dr, dc] list.
 const SQ = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 const TRI = [...SQ, [1, 1], [-1, -1]];
-// 3x4 block (10 jumps), 4x5 block (18), 6-row triangle (19), 4x6 block (22), English cross (31).
-const LEVELS = [
-  { dirs: SQ, board: [[2, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]] },
-  { dirs: SQ, board: [[2, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]] },
-  { dirs: TRI, board: [[1], [1, 1], [1, 1, 1], [1, 2, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1]] },
-  { dirs: SQ, board: [[2, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1]] },
-  { dirs: SQ, board: [[0, 0, 1, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 2, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0, 0]] },
-];
+// One board: the 4-row triangle (4 pegs on the bottom row, 10 holes, 8 jumps). Levels differ only in which hole starts empty; every one of these is solvable.
+const tri = (r, c) => ({ dirs: TRI, board: Array.from({ length: 4 }, (_, i) => Array.from({ length: i + 1 }, (_, k) => (i === r && k === c ? 2 : 1))) });
+const LEVELS = [tri(3, 1), tri(1, 0), tri(2, 2), tri(2, 0), tri(1, 1)];
 
 export const makeLevel = (n) => clone(LEVELS[Math.min(n, LEVELS.length) - 1]);
 export const initialState = (level) => ({ ...clone(level), moves: 0 });

@@ -12,6 +12,6 @@ test('golf-tee: a jump removes the jumped peg and fills the target hole', () => 
   assert.equal(g.applyMove(s, { from: [0, 1], dir: [0, 1] }), null);
 });
 
-test('golf-tee: jumps needed rise from 10 to 31 (pegs - 1)', () => {
-  assert.deepEqual([1, 2, 3, 4, 5].map((n) => g.bestScore(g.makeLevel(n))), [10, 18, 19, 22, 31]);
+test('golf-tee: every level is the 4-row triangle and needs 8 jumps (pegs - 1)', () => {
+  assert.deepEqual([1, 2, 3, 4, 5].map((n) => g.bestScore(g.makeLevel(n))), [8, 8, 8, 8, 8]);
 });

@@ -1,0 +1,31 @@
+// Plays the golf-tee tutorial with real mouse input. Usage: node tools/tut/golf-tee.mjs [dark] [reduced] [outdir]
+import { launch, sleep } from './lib.mjs';
+import { solve, makeLevel } from '../../product/logic/golf-tee.js';
+const [, , a1, a2, out = '/tmp'] = process.argv;
+const t = await launch({ dark: a1 === 'dark', reduced: a2 === 'reduced' });
+const fail = (m) => { console.log('FAIL', m, t.logs); process.exitCode = 1; };
+await t.open('golf-tee');
+await t.waitTitle(/Leave one tee/);
+await t.shot(`${out}/gt-1.png`);
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Jump a tee/);
+const level = makeLevel(1), cols = level.board[0].length;
+const peg = (r, c) => hole(r, c).then((h) => t.ev(`(()=>{const p=[...document.querySelectorAll('.gt-peg')].map((e)=>e.getBoundingClientRect()).find((r)=>Math.abs(r.left+r.width/2-${h.cx})<8&&r.top<${h.cy}&&r.bottom>${h.cy});return {cx:p.left+p.width/2,cy:${h.cy}}})()`));
+const hole = (r, c) => t.ev(`(()=>{const r=document.querySelectorAll('ellipse[style*="gt-hole"]')[${level.board.slice(0, r).reduce((n, row) => n + row.length, 0) + c}].getBoundingClientRect();return {cx:r.left+r.width/2,cy:r.top+r.height/2}})()`);
+const jump = async (m) => {
+  const a = await peg(...m.from), b = await hole(m.from[0] + 2 * m.dir[0], m.from[1] + 2 * m.dir[1]);
+  await t.tap(a.cx, a.cy); await t.tap(b.cx, b.cy); await sleep(1000);
+};
+await jump({ from: [1, 1], dir: [1, 0] }); await t.waitTitle(/Jump over/);
+await t.tapSel('.tut-btn.go'); await t.waitTitle(/Take it back/);
+await t.tapSel('[data-a=undo]'); await t.waitTitle(/Your turn/);
+await sleep(800); await t.shot(`${out}/gt-5.png`);
+for (const m of solve(level)) await jump(m);
+await t.waitTitle(/complete/, 6000);
+await t.shot(`${out}/gt-done.png`);
+if (await t.ev(`localStorage.getItem('puzzle-app-v1')`)) fail('progress changed');
+await t.tapSel('.tut-btn.go'); await sleep(500);
+if (await t.coach()) fail('coach still open');
+if (await t.ev(`localStorage.getItem('puzzle-app-tutorial-v1')`) !== '{"golf-tee":true}') fail('seen flag');
+if (t.logs.length) fail('console errors');
+console.log(process.exitCode ? 'RESULT FAIL' : 'RESULT PASS golf-tee');
+await t.close();
