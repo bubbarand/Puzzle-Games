@@ -1,6 +1,9 @@
 // App shell: home list, game screen (top bar, hud, undo/reset), win screen, sound. See specs/003-game-ui-contract.md.
 import { css as homeCss } from './home-css.js';
-import { thumbs } from './thumbs.js';
+import { thumbs as thumbs0 } from './thumbs.js';
+import { thumbsMore as thumbsA } from './thumbs-a.js';
+import { thumbsMore as thumbsB } from './thumbs-b.js';
+const thumbs = { ...thumbs0, ...thumbsA, ...thumbsB };
 import { games } from './games.js';
 import { stars as rate } from '../logic/rating.js';
 
