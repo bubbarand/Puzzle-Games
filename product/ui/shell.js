@@ -6,6 +6,7 @@ import { thumbsMore as thumbsB } from './thumbs-b.js';
 const thumbs = { ...thumbs0, ...thumbsA, ...thumbsB };
 import { games } from './games.js';
 import { stars as rate } from '../logic/rating.js';
+import { initState, reconcile, onSolved, rowState } from './progress.js';
 
 // Earned order. Built games (in games.js) are available; the rest are locked until built.
 const ORDER = [
@@ -21,6 +22,17 @@ let memory = {};
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return memory; } };
 const save = (d) => { memory = d; try { localStorage.setItem(KEY, JSON.stringify(d)); } catch { /* private window */ } };
 let data = load(); // { [id]: { level, done, stars } }
+
+// ---- daily progression (specs/004-daily-progression.md). `#all` shows every game and leaves progress alone.
+const PKEY = 'puzzle-app-progress-v1';
+let pmemory = null;
+const IDS = ORDER.map((g) => g[0]);
+const loadP = () => { try { return JSON.parse(localStorage.getItem(PKEY)) || pmemory || initState(IDS); } catch { return pmemory || initState(IDS); } };
+const saveP = (s) => { pmemory = s; try { localStorage.setItem(PKEY, JSON.stringify(s)); } catch { /* private window */ } };
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const TEST_OPEN_ALL = true; // Isaac asked for every game open while testing; set false to turn progression on (or use #real).
+const allMode = () => location.hash === '#all' || (TEST_OPEN_ALL && location.hash !== '#real');
+const syncP = () => { if (allMode()) return loadP(); const s = reconcile(loadP(), today()); saveP(s); return s; };
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -89,6 +101,7 @@ const ICON = {
   home: '<svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg>',
 };
 const STAR = (on) => `<svg viewBox="0 0 24 24" fill="${on ? '#F5B82E' : 'none'}" stroke="${on ? '#B8851B' : '#C9C3BB'}" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>`;
+const FROST = '<span class="frost"></span><svg class="flake" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2v22M3.5 7.5l19 11M22.5 7.5l-19 11M10 4l3 3 3-3M10 22l3-3 3 3"/></svg>';
 const LOCK = '<svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke-width="3"/></svg>';
 
 const app = document.getElementById('app');
@@ -100,14 +113,20 @@ let current = null; // { destroy }
 // ---- home
 function home() {
   current?.destroy(); current = null; scrollTo(0, 0);
-  const state = (id) => (!games[id] ? 'locked' : data[id]?.done ? 'done' : 'available');
-  const rank = { available: 0, done: 1, locked: 2 };
+  const prog = syncP(), day = today();
+  const state = (id) => {
+    if (!games[id]) return 'locked';
+    if (allMode()) return 'available';
+    const st = rowState(prog, id, day, IDS);
+    return st === 'done' && !data[id]?.done ? 'available' : st; // done only at the current level
+  };
+  const rank = { available: 0, frozen: 1, done: 2, locked: 3 };
   const list = ORDER.map((g, i) => ({ g, i, st: state(g[0]) })).sort((a, b) => rank[a.st] - rank[b.st] || a.i - b.i);
   const main = h('<main><h1>Puzzles</h1></main>');
   for (const { g: [id, title, cls], st } of list) {
     const d = data[id] || {};
     const starsHtml = st === 'done' ? `<span class="stars">${[1, 2, 3].map((n) => STAR(n <= (d.stars || 0)).replace('<svg', '<svg')).join('')}<span>level ${d.level || 1}</span></span><span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Solved</span>` : '';
-    const row = h(`<div class="row" data-class="${cls}" data-state="${st}" ${st === 'locked' ? '' : 'tabindex="0" role="button"'}>${st === 'locked' ? '' : thumbs[id] || ''}<span class="title">${title}</span>${starsHtml}${st === 'locked' ? LOCK : ''}</div>`);
+    const row = h(`<div class="row" data-class="${cls}" data-state="${st}" ${st === 'locked' ? '' : 'tabindex="0" role="button"'}>${st === 'locked' ? '' : thumbs[id] || ''}<span class="title">${title}</span>${starsHtml}${st === 'frozen' ? FROST : ''}${st === 'locked' ? LOCK : ''}</div>`);
     if (st !== 'locked') { const go = () => openGame(id); row.addEventListener('click', go); row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); }
     main.append(row);
   }
@@ -173,6 +192,7 @@ function openGame(id) {
         const prev = data[id] || {};
         data[id] = { level, done: true, stars: Math.max(prev.level === level ? prev.stars || 0 : 0, n) };
         save(data);
+        if (!allMode()) saveP(onSolved(syncP(), id, today()));
         $('.win .stars').innerHTML = [1, 2, 3].map((k) => STAR(k <= n)).join('');
         $('.win .sc').textContent = `${score} moves, best ${lastHud.best ?? '-'}`;
         $('.win').hidden = false; sound.win();
@@ -184,7 +204,7 @@ function openGame(id) {
     if (a === 'back' || a === 'home') { inst?.destroy(); home(); }
     if (a === 'undo') inst.undo();
     if (a === 'reset') { $('.win').hidden = true; inst.reset(); }
-    if (a === 'next') { level += 1; data[id] = { ...(data[id] || {}), level }; save(data); start(); }
+    if (a === 'next') { level += 1; data[id] = { ...(data[id] || {}), level, done: false }; save(data); start(); }
   });
   current = { destroy: () => inst?.destroy() };
   start();

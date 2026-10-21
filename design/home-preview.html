@@ -79,7 +79,8 @@ h1 { font-size: 1.5rem; font-weight: 800; margin: 0 4px 6px; letter-spacing: -0.
 .row:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .art { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
 .row[data-state="locked"] .title { max-width: 62%; }
-.title { max-width: 44%; overflow-wrap: anywhere; position: relative; }
+.title { max-width: 50%; overflow-wrap: anywhere; position: relative; }
+.row[data-state="done"] .title { font-size: 1.05rem; }
 .stars { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: .72rem; font-weight: 500; color: var(--done-ink); }
 .stars svg { width: 16px; height: 16px; }
 
@@ -169,67 +170,7 @@ h1 { font-size: 1.5rem; font-weight: 800; margin: 0 4px 6px; letter-spacing: -0.
   <h1>Puzzles</h1>
 
   <!-- Available -->
-  <div class="row" data-class="quantity" data-state="available" tabindex="0" role="button">
-    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
-      <rect x="196" y="-4" width="216" height="104" fill="#F2F6FA"/>
-      <g font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">
-        <circle cx="216" cy="24" r="9" fill="#2EC4B6"/><text x="216" y="28" font-size="11" fill="#fff">2</text>
-        <circle cx="216" cy="48" r="9" fill="#7B8CDE"/><text x="216" y="52" font-size="11" fill="#fff">4</text>
-        <circle cx="216" cy="72" r="9" fill="#4CC9F0"/><text x="216" y="76" font-size="11" fill="#fff">6</text>
-      </g>
-      <path d="M262 25 V11 H318 V25" fill="none" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="240" y="25" width="100" height="66" rx="17" fill="none" stroke="#5B7083" stroke-width="2.5"/>
-      <line x1="240" y1="42" x2="340" y2="42" stroke="#E5446D" stroke-width="2" stroke-dasharray="5 5"/>
-      <circle cx="266" cy="72" r="16" fill="#2EC4B6"/><circle cx="312" cy="68" r="20" fill="#4CC9F0"/><circle cx="290" cy="52" r="12" fill="#7B8CDE"/>
-      <g font-family="JetBrains Mono, monospace" font-size="15" fill="#fff" text-anchor="middle" font-weight="500"><text x="266" y="77">3</text><text x="312" y="73">7</text><text x="290" y="57">5</text></g>
-      <line x1="372" y1="12" x2="372" y2="86" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round"/>
-      <rect x="366" y="44" width="12" height="42" rx="6" fill="#2EC4B6"/>
-      <g stroke="#5B7083" stroke-width="2" stroke-linecap="round"><path d="M360 22h8M360 40h8M360 58h8M360 76h8"/></g>
-    </svg>
-    <span class="title">Knapsack</span>
-  </div>
-
-  <div class="row" data-class="direction" data-state="available" tabindex="0" role="button">
-    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
-      <defs><linearGradient id="dirbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B3F7F"/><stop offset="1" stop-color="#2B2D5B"/></linearGradient>
-      <linearGradient id="dirfade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2B2D5B" stop-opacity="0"/><stop offset="1" stop-color="#2B2D5B" stop-opacity="1"/></linearGradient></defs>
-      <rect x="196" y="-4" width="214" height="104" fill="url(#dirbg)"/>
-      <!-- base cube -->
-      <polygon points="236,36 256,46 236,56 216,46" fill="#A8E6CF"/><polygon points="216,46 236,56 236,80 216,70" fill="#3FB8AF"/><polygon points="236,56 256,46 256,70 236,80" fill="#2A8A8C"/>
-      <!-- mirror cube -->
-      <polygon points="322,10 342,20 322,30 302,20" fill="#E8A0BF"/><polygon points="302,20 322,30 322,54 302,44" fill="#C97AA0"/><polygon points="322,30 342,20 342,44 322,54" fill="#8F4F7A"/>
-      <!-- small cube -->
-      <g transform="translate(-12 -4)"><polygon points="372,50 388,58 372,66 356,58" fill="#FFE27A"/><polygon points="356,58 372,66 372,84 356,76" fill="#E0B94A"/><polygon points="372,66 388,58 388,76 372,84" fill="#B58F2E"/></g>
-      <path d="M204 86 L236 70 L296 40 L312 26 L312 4" fill="none" stroke="#FFE27A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="312" cy="6" r="5" fill="#FFE27A"/>
-    </svg>
-    <span class="title">Mirror &amp; Laser</span>
-  </div>
-
-  <!-- Frozen -->
-  <div class="row" data-class="sequence" data-state="frozen" tabindex="0" role="button">
-    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
-      <rect x="150" y="-4" width="260" height="104" fill="#0B3C5D" opacity=".0"/>
-      <g stroke="#EAF6FF" stroke-width="2" stroke-linecap="round"><path d="M176 10h10M176 10v10M388 10h-10M388 10v10M176 86h10M176 86v-10M388 86h-10M388 86v-10"/></g>
-      <g>
-        <rect x="196" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
-        <rect x="238" y="12" width="36" height="34" rx="14" fill="#FFE066"/>
-        <rect x="280" y="12" width="36" height="34" rx="14" fill="#B6E36B"/>
-        <rect x="322" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
-        <rect x="196" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
-        <rect x="238" y="52" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
-        <rect x="280" y="52" width="36" height="34" rx="14" fill="#FFE066"/>
-        <rect x="322" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
-      </g>
-      <g fill="#fff" opacity=".75"><ellipse cx="256" cy="21" rx="9" ry="3.5"/><ellipse cx="298" cy="21" rx="9" ry="3.5"/><ellipse cx="214" cy="61" rx="9" ry="3.5"/><ellipse cx="298" cy="61" rx="9" ry="3.5"/><ellipse cx="340" cy="61" rx="9" ry="3.5"/></g>
-    </svg>
-    <span class="frost"></span>
-    <svg class="flake" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2v22M3.5 7.5l19 11M22.5 7.5l-19 11M10 4l3 3 3-3M10 22l3-3 3 3"/></svg>
-    <span class="title">Lights Out</span>
-  </div>
-
-  <!-- Done -->
-  <div class="row" data-class="space" data-state="done" tabindex="0" role="button">
+  <div class="row" data-class="space" data-state="available" tabindex="0" role="button">
     <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
       <rect x="196" y="-4" width="216" height="104" fill="#FFF3E0"/>
       <g stroke="#4A2C2A" stroke-width="2">
@@ -249,11 +190,113 @@ h1 { font-size: 1.5rem; font-weight: 800; margin: 0 4px 6px; letter-spacing: -0.
       <path d="M372 36 L388 41 L372 46 Z" fill="#4A2C2A"/>
     </svg>
     <span class="title">Traffic Jam</span>
+  </div>
+  <div class="row" data-class="quantity" data-state="available" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#F2F6FA"/>
+      <g font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">
+        <circle cx="216" cy="24" r="9" fill="#2EC4B6"/><text x="216" y="28" font-size="11" fill="#fff">2</text>
+        <circle cx="216" cy="48" r="9" fill="#7B8CDE"/><text x="216" y="52" font-size="11" fill="#fff">4</text>
+        <circle cx="216" cy="72" r="9" fill="#4CC9F0"/><text x="216" y="76" font-size="11" fill="#fff">6</text>
+      </g>
+      <path d="M262 25 V11 H318 V25" fill="none" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="240" y="25" width="100" height="66" rx="17" fill="none" stroke="#5B7083" stroke-width="2.5"/>
+      <line x1="240" y1="42" x2="340" y2="42" stroke="#E5446D" stroke-width="2" stroke-dasharray="5 5"/>
+      <circle cx="266" cy="72" r="16" fill="#2EC4B6"/><circle cx="312" cy="68" r="20" fill="#4CC9F0"/><circle cx="290" cy="52" r="12" fill="#7B8CDE"/>
+      <g font-family="JetBrains Mono, monospace" font-size="15" fill="#fff" text-anchor="middle" font-weight="500"><text x="266" y="77">3</text><text x="312" y="73">7</text><text x="290" y="57">5</text></g>
+      <line x1="372" y1="12" x2="372" y2="86" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="366" y="44" width="12" height="42" rx="6" fill="#2EC4B6"/>
+      <g stroke="#5B7083" stroke-width="2" stroke-linecap="round"><path d="M360 22h8M360 40h8M360 58h8M360 76h8"/></g>
+    </svg>
+    <span class="title">Knapsack</span>
+  </div>
+  <div class="row" data-class="direction" data-state="available" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <defs><linearGradient id="dirbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B3F7F"/><stop offset="1" stop-color="#2B2D5B"/></linearGradient>
+      <linearGradient id="dirfade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2B2D5B" stop-opacity="0"/><stop offset="1" stop-color="#2B2D5B" stop-opacity="1"/></linearGradient></defs>
+      <rect x="196" y="-4" width="214" height="104" fill="url(#dirbg)"/>
+      <!-- base cube -->
+      <polygon points="236,36 256,46 236,56 216,46" fill="#A8E6CF"/><polygon points="216,46 236,56 236,80 216,70" fill="#3FB8AF"/><polygon points="236,56 256,46 256,70 236,80" fill="#2A8A8C"/>
+      <!-- mirror cube -->
+      <polygon points="322,10 342,20 322,30 302,20" fill="#E8A0BF"/><polygon points="302,20 322,30 322,54 302,44" fill="#C97AA0"/><polygon points="322,30 342,20 342,44 322,54" fill="#8F4F7A"/>
+      <!-- small cube -->
+      <g transform="translate(-12 -4)"><polygon points="372,50 388,58 372,66 356,58" fill="#FFE27A"/><polygon points="356,58 372,66 372,84 356,76" fill="#E0B94A"/><polygon points="372,66 388,58 388,76 372,84" fill="#B58F2E"/></g>
+      <path d="M204 86 L236 70 L296 40 L312 26 L312 4" fill="none" stroke="#FFE27A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="312" cy="6" r="5" fill="#FFE27A"/>
+    </svg>
+    <span class="title">Mirror &amp; Laser</span>
+  </div>
+  <div class="row" data-class="sequence" data-state="available" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="150" y="-4" width="260" height="104" fill="#0B3C5D" opacity=".0"/>
+      <g stroke="#EAF6FF" stroke-width="2" stroke-linecap="round"><path d="M176 10h10M176 10v10M388 10h-10M388 10v10M176 86h10M176 86v-10M388 86h-10M388 86v-10"/></g>
+      <g>
+        <rect x="196" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="238" y="12" width="36" height="34" rx="14" fill="#FFE066"/>
+        <rect x="280" y="12" width="36" height="34" rx="14" fill="#B6E36B"/>
+        <rect x="322" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="196" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
+        <rect x="238" y="52" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="280" y="52" width="36" height="34" rx="14" fill="#FFE066"/>
+        <rect x="322" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
+      </g>
+      <g fill="#fff" opacity=".75"><ellipse cx="256" cy="21" rx="9" ry="3.5"/><ellipse cx="298" cy="21" rx="9" ry="3.5"/><ellipse cx="214" cy="61" rx="9" ry="3.5"/><ellipse cx="298" cy="61" rx="9" ry="3.5"/><ellipse cx="340" cy="61" rx="9" ry="3.5"/></g>
+    </svg>
+    <span class="title">Lights Out</span>
+  </div>
+
+  <!-- Frozen -->
+  <div class="row" data-class="space" data-state="frozen" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#FFF3E0"/>
+      <rect x="203" y="9" width="188" height="80" rx="18" fill="#E3A04F" stroke="#4A2C2A" stroke-width="3"/>
+      <path d="M216 22q20-3 40 0t40 0M290 82q30-3 60 0t30 0M214 56q10 3 20 0" fill="none" stroke="#4A2C2A" stroke-opacity=".16" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="320" cy="36.5" rx="11" ry="9" fill="#fff" fill-opacity=".3"/><ellipse cx="320" cy="34" rx="11" ry="9" fill="#5A3322" stroke="#4A2C2A" stroke-width="2"/><ellipse cx="318" cy="32" rx="5" ry="2.6" fill="#000" fill-opacity=".3"/><ellipse cx="276" cy="68.5" rx="11" ry="9" fill="#fff" fill-opacity=".3"/><ellipse cx="276" cy="66" rx="11" ry="9" fill="#5A3322" stroke="#4A2C2A" stroke-width="2"/><ellipse cx="274" cy="64" rx="5" ry="2.6" fill="#000" fill-opacity=".3"/><path d="M232 20 Q254 2 276 20" fill="none" stroke="#4A2C2A" stroke-width="2.2" stroke-dasharray="4 4" stroke-linecap="round" display="none"/><ellipse cx="232" cy="46" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="232" cy="33" r="13" fill="#F4623A" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="227" cy="26" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="228" cy="34" r="2.6" fill="#fff"/><circle cx="236" cy="34" r="2.6" fill="#fff"/><circle cx="228" cy="34.4" r="1.2" fill="#4A2C2A"/><circle cx="236" cy="34.4" r="1.2" fill="#4A2C2A"/><path d="M228 38.6Q232 42.6 236 38.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="276" cy="46" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="276" cy="33" r="13" fill="#7FC8F8" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="271" cy="26" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="272" cy="34" r="2.6" fill="#fff"/><circle cx="280" cy="34" r="2.6" fill="#fff"/><circle cx="272" cy="34.4" r="1.2" fill="#4A2C2A"/><circle cx="280" cy="34.4" r="1.2" fill="#4A2C2A"/><path d="M272 38.6Q276 42.6 280 38.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="364" cy="46" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="364" cy="33" r="13" fill="#6BBF59" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="359" cy="26" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="360" cy="34" r="2.6" fill="#fff"/><circle cx="368" cy="34" r="2.6" fill="#fff"/><circle cx="360" cy="34.4" r="1.2" fill="#4A2C2A"/><circle cx="368" cy="34.4" r="1.2" fill="#4A2C2A"/><path d="M360 38.6Q364 42.6 368 38.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="232" cy="78" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="232" cy="65" r="13" fill="#B79CED" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="227" cy="58" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="228" cy="66" r="2.6" fill="#fff"/><circle cx="236" cy="66" r="2.6" fill="#fff"/><circle cx="228" cy="66.4" r="1.2" fill="#4A2C2A"/><circle cx="236" cy="66.4" r="1.2" fill="#4A2C2A"/><path d="M228 70.6Q232 74.6 236 70.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="320" cy="78" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="320" cy="65" r="13" fill="#FF8FB1" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="315" cy="58" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="316" cy="66" r="2.6" fill="#fff"/><circle cx="324" cy="66" r="2.6" fill="#fff"/><circle cx="316" cy="66.4" r="1.2" fill="#4A2C2A"/><circle cx="324" cy="66.4" r="1.2" fill="#4A2C2A"/><path d="M316 70.6Q320 74.6 324 70.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="364" cy="78" rx="10" ry="3" fill="#4A2C2A" fill-opacity=".25"/><circle cx="364" cy="65" r="13" fill="#FFC857" stroke="#4A2C2A" stroke-width="2.5"/><ellipse cx="359" cy="58" rx="5" ry="2.6" fill="#fff" fill-opacity=".6"/><circle cx="360" cy="66" r="2.6" fill="#fff"/><circle cx="368" cy="66" r="2.6" fill="#fff"/><circle cx="360" cy="66.4" r="1.2" fill="#4A2C2A"/><circle cx="368" cy="66.4" r="1.2" fill="#4A2C2A"/><path d="M360 70.6Q364 74.6 368 70.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><path d="M276 17Q298 -3 320 17" fill="none" stroke="#4A2C2A" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round" display="none"/>
+    </svg>
+    <span class="frost"></span>
+    <svg class="flake" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2v22M3.5 7.5l19 11M22.5 7.5l-19 11M10 4l3 3 3-3M10 22l3-3 3 3"/></svg>
+    <span class="title">Golf Tee</span>
+  </div>
+  <div class="row" data-class="quantity" data-state="frozen" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#F2F6FA"/><g><rect x="226" y="10" width="136" height="6" rx="3" fill="#5B7083" fill-opacity=".15"/><rect x="226" y="10" width="62" height="6" rx="3" fill="#7B8CDE"/><rect x="290" y="10" width="44" height="6" fill="#4CC9F0"/><rect x="336" y="10" width="26" height="6" rx="3" fill="#2EC4B6"/></g><g stroke="#F2F6FA" stroke-width="2"><path d="M289 9V17M335 9V17"/></g><path d="M278 28H322C322 36 346 42 350 62C353 80 340 90 300 90C260 90 247 80 250 62C254 42 278 36 278 28Z" fill="#4CC9F0" fill-opacity=".10" stroke="#5B7083" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M276 28H324" stroke="#5B7083" stroke-width="3" stroke-linecap="round"/>
+      <path d="M262 52C258 62 258 72 264 80" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/><g><circle cx="285" cy="70" r="13" fill="#7B8CDE"/><text x="285" y="74" font-size="13" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">3</text><circle cx="314" cy="74" r="13" fill="#4CC9F0"/><circle cx="314" cy="74" r="11.2" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><text x="314" y="78" font-size="13" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">5</text><circle cx="299" cy="52" r="12" fill="#2EC4B6"/><circle cx="299" cy="52" r="8.4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><circle cx="299" cy="52" r="10.2" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><text x="299" y="56" font-size="11" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">7</text><circle cx="325" cy="56" r="10" fill="#7B8CDE"/><text x="325" y="60" font-size="11" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">2</text></g><path d="M328 28Q352 20 370 28" fill="none" stroke="#5B7083" stroke-width="1.6" stroke-dasharray="3 4" stroke-linecap="round"/><circle cx="378" cy="46" r="11" fill="#4CC9F0"/><circle cx="378" cy="46" r="9.2" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1"/><text x="378" y="50" font-size="11" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">4</text>
+    </svg>
+    <span class="frost"></span>
+    <svg class="flake" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2v22M3.5 7.5l19 11M22.5 7.5l-19 11M10 4l3 3 3-3M10 22l3-3 3 3"/></svg>
+    <span class="title">Bag Draw</span>
+  </div>
+
+  <!-- Done -->
+  <div class="row" data-class="space" data-state="done" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#FFF3E0"/>
+      <rect x="286" y="3" width="90" height="90" rx="12" fill="#E9CFA0" stroke="#4A2C2A" stroke-width="3"/>
+      <g fill="#D9B97E" stroke="#4A2C2A" stroke-width="2" stroke-dasharray="4 3"><rect x="318" y="35" width="26" height="26" rx="4"/><rect x="344" y="35" width="26" height="26" rx="4"/><rect x="344" y="61" width="26" height="26" rx="4"/></g><g fill="#4A2C2A" stroke="#4A2C2A" stroke-width="5" stroke-linejoin="round"><rect x="292" y="9" width="26" height="26" rx="5"/><rect x="292" y="35" width="26" height="26" rx="5"/><rect x="292" y="61" width="26" height="26" rx="5"/><rect x="318" y="61" width="26" height="26" rx="5"/></g><g fill="#F4623A" stroke="#F4623A" stroke-width="1" stroke-linejoin="round"><rect x="292" y="9" width="26" height="26" rx="5"/><rect x="292" y="35" width="26" height="26" rx="5"/><rect x="292" y="61" width="26" height="26" rx="5"/><rect x="318" y="61" width="26" height="26" rx="5"/></g><g fill="#4A2C2A" stroke="#4A2C2A" stroke-width="5" stroke-linejoin="round"><rect x="318" y="9" width="26" height="26" rx="5"/><rect x="344" y="9" width="26" height="26" rx="5"/></g><g fill="#6BBF59" stroke="#6BBF59" stroke-width="1" stroke-linejoin="round"><rect x="318" y="9" width="26" height="26" rx="5"/><rect x="344" y="9" width="26" height="26" rx="5"/></g><g fill="#fff" fill-opacity=".5"><ellipse cx="301" cy="16" rx="6" ry="2.6"/><ellipse cx="327" cy="16" rx="6" ry="2.6"/></g><circle cx="301" cy="45" r="2.6" fill="#fff"/><circle cx="309" cy="45" r="2.6" fill="#fff"/><circle cx="301" cy="45.4" r="1.2" fill="#4A2C2A"/><circle cx="309" cy="45.4" r="1.2" fill="#4A2C2A"/><path d="M301 49.6Q305 53.6 309 49.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><g fill="#4A2C2A" stroke="#4A2C2A" stroke-width="5" stroke-linejoin="round"><rect x="232" y="38" width="24" height="24" rx="5"/><rect x="232" y="62" width="24" height="24" rx="5"/><rect x="256" y="62" width="24" height="24" rx="5"/></g><g fill="#FFC857" stroke="#FFC857" stroke-width="1" stroke-linejoin="round"><rect x="232" y="38" width="24" height="24" rx="5"/><rect x="232" y="62" width="24" height="24" rx="5"/><rect x="256" y="62" width="24" height="24" rx="5"/></g><g fill="#fff" fill-opacity=".55"><ellipse cx="243" cy="45" rx="5" ry="2.4"/></g><path d="M238 26Q256 12 274 24" fill="none" stroke="#4A2C2A" stroke-width="3" stroke-linecap="round"/><path d="M268 15L277 25L265 28Z" fill="#4A2C2A" stroke="#4A2C2A" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+    <span class="title">Build the Square</span>
     <span class="stars">
       <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
       <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
       <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
-      <span>14 moves</span>
+      <span>level 1</span>
+    </span>
+    <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Solved</span>
+    <svg class="twinkle" style="left:46%;top:8px" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+    <svg class="twinkle" style="left:40%;bottom:12px;animation-delay:-1.4s" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+    <svg class="twinkle" style="right:10px;top:8px;animation-delay:-2.2s" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+  </div>
+  <div class="row" data-class="space" data-state="done" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#FFE3B3"/>
+      <g stroke="#4A2C2A" stroke-opacity=".2" stroke-width="1"><path d="M246 0V96M284 0V96M322 0V96M360 0V96M196 49H410M196 9H410"/></g><rect x="208" y="9" width="38" height="37" rx="5" fill="#C8704A" stroke="#4A2C2A" stroke-width="2.5"/><path d="M210 21H244M210 34H244M222 11V21M234 21V34M222 34V44" stroke="#4A2C2A" stroke-opacity=".55" stroke-width="1.8" fill="none"/><rect x="360" y="9" width="38" height="37" rx="5" fill="#C8704A" stroke="#4A2C2A" stroke-width="2.5"/><path d="M362 21H396M362 34H396M374 11V21M386 21V34M374 34V44" stroke="#4A2C2A" stroke-opacity=".55" stroke-width="1.8" fill="none"/><rect x="328" y="15" width="26" height="25" rx="4" fill="none" stroke="#4A2C2A" stroke-width="2.4" stroke-dasharray="5 4"/><path d="M336 23L346 32M346 23L336 32" stroke="#4A2C2A" stroke-width="2.4" stroke-linecap="round"/><rect x="287" y="12" width="32" height="31" rx="6" fill="#E9A85C" stroke="#4A2C2A" stroke-width="2.8"/><path d="M291 16L315 39M315 16L291 39" stroke="#4A2C2A" stroke-opacity=".3" stroke-width="2"/><rect x="293" y="18" width="20" height="19" rx="3" fill="#F7CF8E" stroke="#4A2C2A" stroke-width="1.8"/><circle cx="299" cy="25" r="2.6" fill="#fff"/><circle cx="307" cy="25" r="2.6" fill="#fff"/><circle cx="299" cy="25.4" r="1.2" fill="#4A2C2A"/><circle cx="307" cy="25.4" r="1.2" fill="#4A2C2A"/><path d="M299 29.6Q303 33.6 307 29.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="265" cy="47" rx="12" ry="3.5" fill="#4A2C2A" fill-opacity=".25"/><rect x="256" y="39" width="7" height="8" rx="3" fill="#4D3858" stroke="#4A2C2A" stroke-width="2"/><rect x="267" y="39" width="7" height="8" rx="3" fill="#4D3858" stroke="#4A2C2A" stroke-width="2"/><circle cx="265" cy="30" r="13" fill="#FFDDB8" stroke="#4A2C2A" stroke-width="2.6"/><path d="M252 27A13 13 0 0 1 278 27Z" fill="#FFC857" stroke="#4A2C2A" stroke-width="2.6" stroke-linejoin="round"/><rect x="251" y="25" width="28" height="4.5" rx="2" fill="#FFC857" stroke="#4A2C2A" stroke-width="2"/><circle cx="260.5" cy="33" r="2.4" fill="#fff"/><circle cx="269.5" cy="33" r="2.4" fill="#fff"/><circle cx="261.3" cy="33.4" r="1.1" fill="#4A2C2A"/><circle cx="270.3" cy="33.4" r="1.1" fill="#4A2C2A"/><path d="M261 38Q265 41 269 38" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><circle cx="280" cy="34" r="4.5" fill="#FFDDB8" stroke="#4A2C2A" stroke-width="2"/><path d="M286 28 h0" stroke="#4A2C2A"/><rect x="208" y="49" width="38" height="37" rx="5" fill="#C8704A" stroke="#4A2C2A" stroke-width="2.5"/><path d="M210 61H244M210 74H244M222 51V61M234 61V74M222 74V84" stroke="#4A2C2A" stroke-opacity=".55" stroke-width="1.8" fill="none"/><rect x="290" y="55" width="26" height="25" rx="4" fill="none" stroke="#4A2C2A" stroke-width="2.4" stroke-dasharray="5 4"/><path d="M298 63L308 72M308 63L298 72" stroke="#4A2C2A" stroke-width="2.4" stroke-linecap="round"/><rect x="287" y="52" width="32" height="31" rx="6" fill="#6BBF59" stroke="#4A2C2A" stroke-width="2.8"/><path d="M291 56L315 79M315 56L291 79" stroke="#4A2C2A" stroke-opacity=".3" stroke-width="2"/><rect x="293" y="58" width="20" height="19" rx="3" fill="#9BDB84" stroke="#4A2C2A" stroke-width="1.8"/><circle cx="299" cy="65" r="2.6" fill="#fff"/><circle cx="307" cy="65" r="2.6" fill="#fff"/><circle cx="299" cy="65.4" r="1.2" fill="#4A2C2A"/><circle cx="307" cy="65.4" r="1.2" fill="#4A2C2A"/><path d="M299 69.6Q303 73.6 307 69.6" fill="none" stroke="#4A2C2A" stroke-width="1.6" stroke-linecap="round"/><rect x="360" y="49" width="38" height="37" rx="5" fill="#C8704A" stroke="#4A2C2A" stroke-width="2.5"/><path d="M362 61H396M362 74H396M374 51V61M386 61V74M374 74V84" stroke="#4A2C2A" stroke-opacity=".55" stroke-width="1.8" fill="none"/><g fill="#FFC857" stroke="#4A2C2A" stroke-width="1.4" stroke-linejoin="round"><path d="M319 53l2.5 5l5 2.5l-5 2.5l-2.5 5l-2.5-5l-5-2.5l5-2.5Z"/><path d="M286 79l1.6 3l3 1.6l-3 1.6l-1.6 3l-1.6-3l-3-1.6l3-1.6Z"/></g>
+    </svg>
+    <span class="title">Sokoban</span>
+    <span class="stars">
+      <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <span>level 1</span>
     </span>
     <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Solved</span>
     <svg class="twinkle" style="left:46%;top:8px" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
@@ -262,18 +305,24 @@ h1 { font-size: 1.5rem; font-weight: 800; margin: 0 4px 6px; letter-spacing: -0.
   </div>
 
   <!-- Locked -->
-  <div class="row" data-class="space" data-state="locked"><span class="title">Golf Tee</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
-  <div class="row" data-class="space" data-state="locked"><span class="title">Build the Square</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
-  <div class="row" data-class="space" data-state="locked"><span class="title">Sokoban</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
-  <div class="row" data-class="quantity" data-state="locked"><span class="title">Bag Draw</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="space" data-state="locked"><span class="title">Pentomino Square</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="quantity" data-state="locked"><span class="title">Resource Split</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="quantity" data-state="locked"><span class="title">Balance Scale</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="quantity" data-state="locked"><span class="title">Shape Sudoku</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="direction" data-state="locked"><span class="title">Monument Path</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
   <div class="row" data-class="direction" data-state="locked"><span class="title">Network Flow</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="direction" data-state="locked"><span class="title">Tool Crew</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="sequence" data-state="locked"><span class="title">Turn Tactics</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
   <div class="row" data-class="sequence" data-state="locked"><span class="title">Tower of Hanoi</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="sequence" data-state="locked"><span class="title">Tower Fall</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="sequence" data-state="locked"><span class="title">Matrix Reasoning</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="sequence" data-state="locked"><span class="title">Domino Logic</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
 
   <div class="key">
     Review key (not part of the app).<br>
     Order: <b>available</b> (bright, shines once every 20 seconds), <b>frozen</b> (ice), <b>done</b> (gold edge, stars, solved stamp, twinkles), <b>locked</b> (grey).<br>
     Hover, touch, or select holds the shine until you move away.<br>
-    Shown: Knapsack and Mirror &amp; Laser available, Lights Out frozen, Traffic Jam done, 6 of the 16 locked rows. The full list has 20 rows.
+    Shown: all 20 games in the shipped order with their real thumbnails. Traffic Jam, Knapsack, Mirror &amp; Laser and Lights Out (the four starting games) are available, Golf Tee and Bag Draw frozen, Build the Square and Sokoban done, the other 12 locked.
   </div>
 </main>
 
