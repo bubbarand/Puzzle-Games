@@ -36,7 +36,7 @@ const TEST_OPEN_ALL = true; // Isaac asked for every game open while testing; se
 const allMode = () => location.hash === '#all' || (TEST_OPEN_ALL && location.hash !== '#real');
 const syncP = () => { if (allMode()) return loadP(); const s = reconcile(loadP(), today()); saveP(s); return s; };
 
-const TUTORIAL_ALWAYS = true; // Isaac asked for the tutorial on every play while testing; false = first play only (or the ? button).
+const TUTORIAL_ALWAYS = false; // false = first play only (or the ? button); true = every play, for testing.
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
