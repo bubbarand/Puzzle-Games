@@ -1,0 +1,317 @@
+<title>Daily Puzzles Home</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column of big message-style boxes. The game's art runs edge to edge behind the box,
+   the title sits on the clean left side. Order: available, frozen, done, locked. */
+:root {
+  --bg: #F6F4F0;
+  --ink: #2A2623;
+  --muted: #8C857D;
+  --locked-bg: #E4E1DC;
+  --locked-ink: #A39D95;
+  --ice-top: #E3F4FF;
+  --ice-bot: #BFE3F7;
+  --ice-ink: #1F5B80;
+  --ice-edge: #FFFFFF;
+  --frost-hi: rgba(255,255,255,.55);
+  --frost-tint: rgba(170,220,250,.38);
+  --gold: #E9B949;
+  --gold-deep: #B8851B;
+  --done-ink: #1F6B45;
+  --space-bg: #FFC857;
+  --space-ink: #4A2C2A;
+  --quantity-bg: #DCE3FA;
+  --quantity-ink: #1B2A3A;
+  --direction-from: #A8E6CF;
+  --direction-to: #3FB8AF;
+  --direction-ink: #2B2D5B;
+  --sequence-bg: #0B3C5D;
+  --sequence-line: #1D6FA5;
+  --sequence-ink: #EAF6FF;
+  --font-ui: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120F; --ink: #F1EDE7; --muted: #9A9389;
+    --locked-bg: #25221F; --locked-ink: #6E6860;
+    --ice-top: #1B3A4F; --ice-bot: #123045; --ice-ink: #BFE6FA; --ice-edge: #5FA6CC;
+    --frost-hi: rgba(255,255,255,.22); --frost-tint: rgba(40,110,160,.30);
+    --quantity-bg: #2A3350; --quantity-ink: #E6ECFA;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14120F; --ink: #F1EDE7; --muted: #9A9389;
+  --locked-bg: #25221F; --locked-ink: #6E6860;
+  --ice-top: #1B3A4F; --ice-bot: #123045; --ice-ink: #BFE6FA; --ice-edge: #5FA6CC;
+  --frost-hi: rgba(255,255,255,.22); --frost-tint: rgba(40,110,160,.30);
+  --quantity-bg: #2A3350; --quantity-ink: #E6ECFA;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui);
+  padding-block: 20px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-size: 1.5rem; font-weight: 800; margin: 0 4px 6px; letter-spacing: -0.01em; }
+
+/* The message-style box */
+.row {
+  position: relative; overflow: hidden; isolation: isolate;
+  height: 96px; padding: 0 18px;
+  display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  border-radius: 26px 26px 26px 8px;
+  font-weight: 800; font-size: 1.2rem; line-height: 1.15;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: filter .7s ease, box-shadow .7s ease, transform .12s;
+  animation: arrive .45s cubic-bezier(.22,.8,.3,1) both;
+}
+.row:nth-child(2) { animation-delay: .04s } .row:nth-child(3) { animation-delay: .08s }
+.row:nth-child(4) { animation-delay: .12s } .row:nth-child(5) { animation-delay: .16s }
+@keyframes arrive { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+.row:active { transform: scale(.985); transition: transform .12s; }
+.row:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.art { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
+.row[data-state="locked"] .title { max-width: 62%; }
+.title { max-width: 44%; overflow-wrap: anywhere; position: relative; }
+.stars { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: .72rem; font-weight: 500; color: var(--done-ink); }
+.stars svg { width: 16px; height: 16px; }
+
+/* Class colors (available) */
+.row[data-class="space"] { background: var(--space-bg); color: var(--space-ink); box-shadow: 0 3px 0 rgba(74,44,42,.25); }
+.row[data-class="quantity"] { background: var(--quantity-bg); color: var(--quantity-ink); }
+.row[data-class="direction"] { background: linear-gradient(135deg, var(--direction-from), var(--direction-to)); color: var(--direction-ink); }
+.row[data-class="sequence"] {
+  background-color: var(--sequence-bg); color: var(--sequence-ink);
+  background-image: linear-gradient(var(--sequence-line) 1px, transparent 1px), linear-gradient(90deg, var(--sequence-line) 1px, transparent 1px);
+  background-size: 16px 16px; background-position: -1px -1px;
+}
+
+/* Done: full color, gold edge, solved stamp, stars, twinkles */
+.row[data-state="done"] { box-shadow: 0 3px 0 rgba(184,133,27,.35); }
+.row[data-state="done"]::before, .row[data-state="frozen"]::before {
+  content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: inherit;
+}
+.row[data-state="done"]::before { border: 3px solid var(--gold); }
+.row[data-state="frozen"]::before { border: 2px solid var(--ice-edge); box-shadow: inset 0 0 12px rgba(255,255,255,.7); }
+.row[data-state="done"] .art { filter: saturate(.75) brightness(1.02); }
+.row[data-state="done"] { justify-content: flex-end; padding-bottom: 12px; }
+.stamp {
+  position: absolute; left: 14px; top: 10px; z-index: 2;
+  transform: rotate(-4deg);
+  padding: 3px 9px; border: 2.5px solid var(--done-ink); border-radius: 10px;
+  background: rgba(255,255,255,.86); color: var(--done-ink);
+  font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.18);
+}
+.stamp svg { width: 14px; height: 14px; }
+.twinkle { position: absolute; z-index: 2; width: 12px; height: 12px; animation: twinkle 3.2s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { opacity: .35; transform: scale(.7) } 50% { opacity: 1; transform: scale(1.15) } }
+
+/* Locked */
+.row[data-state="locked"] { background: var(--locked-bg) !important; background-image: none !important; color: var(--locked-ink) !important; box-shadow: none; cursor: default; }
+.lock rect { fill: var(--locked-ink) } .lock path { stroke: var(--locked-ink) }
+.lock { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; }
+
+/* Frozen */
+.row[data-state="frozen"] {
+  background: linear-gradient(160deg, var(--ice-top), var(--ice-bot)) !important; background-image: linear-gradient(160deg, var(--ice-top), var(--ice-bot)) !important;
+  color: var(--ice-ink) !important;
+  box-shadow: 0 0 18px rgba(120,200,240,.5);
+}
+.row[data-state="frozen"] .art { filter: saturate(.6) brightness(1.15); opacity: .9; }
+.frost { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, var(--frost-hi), rgba(255,255,255,0) 55%),
+              linear-gradient(var(--frost-tint), var(--frost-tint)),
+              radial-gradient(circle at 10% 20%, rgba(255,255,255,.8) 0 2px, transparent 3px),
+              radial-gradient(circle at 70% 78%, rgba(255,255,255,.7) 0 2px, transparent 3px),
+              radial-gradient(circle at 90% 18%, rgba(255,255,255,.8) 0 1.5px, transparent 2.5px); }
+.flake { position: absolute; right: 18px; top: 12px; z-index: 2; width: 24px; height: 24px; color: #fff; filter: drop-shadow(0 1px 2px rgba(31,91,128,.6)); }
+
+/* Shine: the whole box brightens, its edges light up and glow, then settles. Hover, touch, or focus holds it. */
+.row { --glow: rgba(255,255,255,.9); }
+.row[data-class="space"] { --glow: #FFE08A; }
+.row[data-class="quantity"] { --glow: #8FA0F0; }
+.row[data-class="direction"] { --glow: #7FE5D6; }
+.row[data-class="sequence"] { --glow: #5CC8FF; }
+.row[data-state="frozen"] { --glow: #9ADCFF; }
+.row[data-state="done"] { --glow: #FFD36A; }
+.row::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(255,255,255,.55) 100%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.9);
+  opacity: 0; transition: opacity .7s ease;
+}
+.row.lit, .row.hold { filter: brightness(1.12) saturate(1.12); box-shadow: 0 0 0 3px var(--glow), 0 0 22px 5px var(--glow); }
+.row.lit::after, .row.hold::after { opacity: 1; }
+.row[data-state="locked"].lit, .row[data-state="locked"].hold { filter: brightness(1.05); box-shadow: 0 0 0 2px rgba(255,255,255,.7); }
+
+@media (prefers-reduced-motion: reduce) {
+  .row, .twinkle { animation: none }
+  .row::after { animation: none !important; display: none }
+}
+
+.key {
+  margin-top: 18px; padding: 14px 4px 0; border-top: 1px dashed var(--muted);
+  color: var(--muted); font-size: .8rem; line-height: 1.5;
+}
+.key b { font-family: var(--font-mono); font-weight: 500; color: var(--ink); }
+</style>
+
+<main>
+  <h1>Puzzles</h1>
+
+  <!-- Available -->
+  <div class="row" data-class="quantity" data-state="available" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#F2F6FA"/>
+      <g font-family="JetBrains Mono, monospace" font-weight="500" text-anchor="middle">
+        <circle cx="216" cy="24" r="9" fill="#2EC4B6"/><text x="216" y="28" font-size="11" fill="#fff">2</text>
+        <circle cx="216" cy="48" r="9" fill="#7B8CDE"/><text x="216" y="52" font-size="11" fill="#fff">4</text>
+        <circle cx="216" cy="72" r="9" fill="#4CC9F0"/><text x="216" y="76" font-size="11" fill="#fff">6</text>
+      </g>
+      <path d="M262 25 V11 H318 V25" fill="none" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="240" y="25" width="100" height="66" rx="17" fill="none" stroke="#5B7083" stroke-width="2.5"/>
+      <line x1="240" y1="42" x2="340" y2="42" stroke="#E5446D" stroke-width="2" stroke-dasharray="5 5"/>
+      <circle cx="266" cy="72" r="16" fill="#2EC4B6"/><circle cx="312" cy="68" r="20" fill="#4CC9F0"/><circle cx="290" cy="52" r="12" fill="#7B8CDE"/>
+      <g font-family="JetBrains Mono, monospace" font-size="15" fill="#fff" text-anchor="middle" font-weight="500"><text x="266" y="77">3</text><text x="312" y="73">7</text><text x="290" y="57">5</text></g>
+      <line x1="372" y1="12" x2="372" y2="86" stroke="#5B7083" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="366" y="44" width="12" height="42" rx="6" fill="#2EC4B6"/>
+      <g stroke="#5B7083" stroke-width="2" stroke-linecap="round"><path d="M360 22h8M360 40h8M360 58h8M360 76h8"/></g>
+    </svg>
+    <span class="title">Knapsack</span>
+  </div>
+
+  <div class="row" data-class="direction" data-state="available" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <defs><linearGradient id="dirbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B3F7F"/><stop offset="1" stop-color="#2B2D5B"/></linearGradient>
+      <linearGradient id="dirfade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2B2D5B" stop-opacity="0"/><stop offset="1" stop-color="#2B2D5B" stop-opacity="1"/></linearGradient></defs>
+      <rect x="196" y="-4" width="214" height="104" fill="url(#dirbg)"/>
+      <!-- base cube -->
+      <polygon points="236,36 256,46 236,56 216,46" fill="#A8E6CF"/><polygon points="216,46 236,56 236,80 216,70" fill="#3FB8AF"/><polygon points="236,56 256,46 256,70 236,80" fill="#2A8A8C"/>
+      <!-- mirror cube -->
+      <polygon points="322,10 342,20 322,30 302,20" fill="#E8A0BF"/><polygon points="302,20 322,30 322,54 302,44" fill="#C97AA0"/><polygon points="322,30 342,20 342,44 322,54" fill="#8F4F7A"/>
+      <!-- small cube -->
+      <g transform="translate(-12 -4)"><polygon points="372,50 388,58 372,66 356,58" fill="#FFE27A"/><polygon points="356,58 372,66 372,84 356,76" fill="#E0B94A"/><polygon points="372,66 388,58 388,76 372,84" fill="#B58F2E"/></g>
+      <path d="M204 86 L236 70 L296 40 L312 26 L312 4" fill="none" stroke="#FFE27A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="312" cy="6" r="5" fill="#FFE27A"/>
+    </svg>
+    <span class="title">Mirror &amp; Laser</span>
+  </div>
+
+  <!-- Frozen -->
+  <div class="row" data-class="sequence" data-state="frozen" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="150" y="-4" width="260" height="104" fill="#0B3C5D" opacity=".0"/>
+      <g stroke="#EAF6FF" stroke-width="2" stroke-linecap="round"><path d="M176 10h10M176 10v10M388 10h-10M388 10v10M176 86h10M176 86v-10M388 86h-10M388 86v-10"/></g>
+      <g>
+        <rect x="196" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="238" y="12" width="36" height="34" rx="14" fill="#FFE066"/>
+        <rect x="280" y="12" width="36" height="34" rx="14" fill="#B6E36B"/>
+        <rect x="322" y="12" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="196" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
+        <rect x="238" y="52" width="36" height="34" rx="14" fill="#0F4D77" stroke="#EAF6FF" stroke-width="2"/>
+        <rect x="280" y="52" width="36" height="34" rx="14" fill="#FFE066"/>
+        <rect x="322" y="52" width="36" height="34" rx="14" fill="#B6E36B"/>
+      </g>
+      <g fill="#fff" opacity=".75"><ellipse cx="256" cy="21" rx="9" ry="3.5"/><ellipse cx="298" cy="21" rx="9" ry="3.5"/><ellipse cx="214" cy="61" rx="9" ry="3.5"/><ellipse cx="298" cy="61" rx="9" ry="3.5"/><ellipse cx="340" cy="61" rx="9" ry="3.5"/></g>
+    </svg>
+    <span class="frost"></span>
+    <svg class="flake" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2v22M3.5 7.5l19 11M22.5 7.5l-19 11M10 4l3 3 3-3M10 22l3-3 3 3"/></svg>
+    <span class="title">Lights Out</span>
+  </div>
+
+  <!-- Done -->
+  <div class="row" data-class="space" data-state="done" tabindex="0" role="button">
+    <svg class="art" viewBox="0 0 400 96" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <rect x="196" y="-4" width="216" height="104" fill="#FFF3E0"/>
+      <g stroke="#4A2C2A" stroke-width="2">
+        <rect x="206" y="24" width="28" height="11" rx="5.5" fill="#F4623A"/>
+        <rect x="206" y="43" width="28" height="11" rx="5.5" fill="#7FC8F8"/>
+        <rect x="206" y="62" width="42" height="11" rx="5.5" fill="#6BBF59"/>
+      </g>
+      <g fill="#fff"><circle cx="213" cy="29.5" r="2.4"/><circle cx="222" cy="29.5" r="2.4"/></g>
+      <g fill="#4A2C2A"><circle cx="213.6" cy="29.8" r="1.1"/><circle cx="222.6" cy="29.8" r="1.1"/></g>
+      <rect x="282" y="6" width="84" height="84" rx="8" fill="#FFE3B3"/>
+      <g stroke="#4A2C2A" stroke-opacity=".22" stroke-width="1"><path d="M296 6V90M282 20H366"/><path d="M310 6V90M282 34H366"/><path d="M324 6V90M282 48H366"/><path d="M338 6V90M282 62H366"/><path d="M352 6V90M282 76H366"/></g>
+      <g stroke="#4A2C2A" stroke-width="2"><rect x="297.5" y="35.5" width="25" height="11" rx="5.5" fill="#F4623A"/><rect x="325.5" y="7.5" width="11" height="39" rx="5.5" fill="#FFC857"/><rect x="283.5" y="49.5" width="11" height="25" rx="5.5" fill="#7FC8F8"/><rect x="311.5" y="63.5" width="39" height="11" rx="5.5" fill="#6BBF59"/><rect x="353.5" y="21.5" width="11" height="25" rx="5.5" fill="#FF8FB1"/><rect x="283.5" y="7.5" width="25" height="11" rx="5.5" fill="#FFB26B"/><rect x="353.5" y="63.5" width="11" height="25" rx="5.5" fill="#2EC4B6"/><rect x="283.5" y="77.5" width="39" height="11" rx="5.5" fill="#B79CED"/></g>
+      <g fill="#fff"><circle cx="305" cy="41" r="2.2"/><circle cx="314" cy="41" r="2.2"/></g>
+      <g fill="#4A2C2A"><circle cx="305.5" cy="41.3" r="1"/><circle cx="314.5" cy="41.3" r="1"/></g>
+      <rect x="282" y="6" width="84" height="84" rx="8" fill="none" stroke="#4A2C2A" stroke-width="3"/>
+      <rect x="362" y="34" width="8" height="14" fill="#FFF3E0"/>
+      <path d="M372 36 L388 41 L372 46 Z" fill="#4A2C2A"/>
+    </svg>
+    <span class="title">Traffic Jam</span>
+    <span class="stars">
+      <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#F5B82E" stroke="#B8851B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <span>14 moves</span>
+    </span>
+    <span class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Solved</span>
+    <svg class="twinkle" style="left:46%;top:8px" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+    <svg class="twinkle" style="left:40%;bottom:12px;animation-delay:-1.4s" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+    <svg class="twinkle" style="right:10px;top:8px;animation-delay:-2.2s" viewBox="0 0 12 12" fill="#E9B949"><path d="M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z"/></svg>
+  </div>
+
+  <!-- Locked -->
+  <div class="row" data-class="space" data-state="locked"><span class="title">Golf Tee</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="space" data-state="locked"><span class="title">Build the Square</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="space" data-state="locked"><span class="title">Sokoban</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="quantity" data-state="locked"><span class="title">Bag Draw</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="direction" data-state="locked"><span class="title">Network Flow</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+  <div class="row" data-class="sequence" data-state="locked"><span class="title">Tower of Hanoi</span><svg class="lock" viewBox="0 0 30 30"><rect x="6" y="14" width="18" height="13" rx="3.5" fill="#A39D95"/><path d="M10 14v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#A39D95" stroke-width="3"/></svg></div>
+
+  <div class="key">
+    Review key (not part of the app).<br>
+    Order: <b>available</b> (bright, shines once every 20 seconds), <b>frozen</b> (ice), <b>done</b> (gold edge, stars, solved stamp, twinkles), <b>locked</b> (grey).<br>
+    Hover, touch, or select holds the shine until you move away.<br>
+    Shown: Knapsack and Mirror &amp; Laser available, Lights Out frozen, Traffic Jam done, 6 of the 16 locked rows. The full list has 20 rows.
+  </div>
+</main>
+
+<script>
+/* Each available box shines once every 20 s. Hover, touch, or focus makes it shine at once and hold the shine
+   until the pointer leaves, focus moves, or the page scrolls (touch). The 20 s timer restarts on every touch or hover. */
+(function () {
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+  var PERIOD = 20000;
+  var rows = Array.prototype.slice.call(document.querySelectorAll(".row"));
+  var touchHeld = [];
+  function pulse(row) {
+    if (row.classList.contains("hold")) return;
+    row.classList.add("lit");
+    setTimeout(function () { row.classList.remove("lit"); }, 1300);
+  }
+  rows.forEach(function (row, i) {
+    var timer = null, available = row.getAttribute("data-state") === "available";
+    function schedule(delay) {
+      if (!available) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { pulse(row); schedule(PERIOD); }, delay);
+    }
+    function hold() { row.classList.remove("lit"); row.classList.add("hold"); schedule(PERIOD); }
+    function release() { row.classList.remove("hold"); schedule(PERIOD); }
+    row.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hold(); });
+    row.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") release(); });
+    row.addEventListener("touchstart", function () { touchHeld.forEach(function (r) { r.classList.remove("hold"); }); touchHeld = [row]; hold(); }, { passive: true });
+    row.addEventListener("focus", hold);
+    row.addEventListener("blur", release);
+    schedule(2000 + i * 6000);
+  });
+  var lastY = window.scrollY;
+  window.addEventListener("scroll", function () {
+    if (Math.abs(window.scrollY - lastY) < 30) return;
+    lastY = window.scrollY;
+    touchHeld.forEach(function (r) { r.classList.remove("hold"); }); touchHeld = [];
+  }, { passive: true });
+})();
+</script>

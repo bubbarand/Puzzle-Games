@@ -13,7 +13,7 @@ Skill tags: N numbers, R risk vs return, C choose under constraints, K use a set
 ## Quantity
 - `bag-draw` [R,K]: you own tiles with values. Before each round you may add or swap tiles in the bag. The round draws N tiles at random (seeded from the level number). Reach the target sum. Limited tries (`maxTries` = 3). Luck is kept. Called a skill game.
 - `knapsack` [N,R,C]: items with weight and value, a weight limit. Reach a target total value. Redesign idea: a balloon that rises with value and sinks with weight.
-- `resource-allocation` [N,R]: 10 coins, 4 options. Each option shows a fixed 5-year return table and a risk number. Reach a target total return while the worst year stays above a limit. No luck (all years shown).
+- `resource-allocation` [N,R]: 10 coins, 4 to 6 options (levels 1-2 have 4, levels 3-4 have 5, level 5 has 6; each level has one winning split). Each option shows a fixed 5-year return table and a risk number. Reach a target total return while the worst year stays above a limit. No luck (all years shown).
 - `balance-scale` [N,C]: shapes have hidden integer weights. Scales show equalities. Find the weight of each shape, then balance a final scale.
 - `shape-sudoku` [C]: 4x4 or 6x6 Latin square using shapes instead of numbers. Fill the grid so no shape repeats in a row or column. Some cells are given.
 
